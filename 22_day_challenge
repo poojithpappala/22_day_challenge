@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>30-Day Challenge Tracker</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            text-align: center;
+            background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        
+        h1 {
+            font-size: 3em;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+        
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 700px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .day {
+            width: 60px;
+            height: 60px;
+            margin: 10px;
+            border: 3px solid #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 600;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .day:hover {
+            transform: scale(1.2);
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .completed {
+            background: #4CAF50;
+            color: white;
+            text-decoration: line-through;
+            box-shadow: 0 0 15px #4CAF50;
+        }
+        
+        .progress-bar {
+            width: 80%;
+            max-width: 600px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            margin-top: 30px;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+        
+        .progress {
+            height: 100%;
+            width: 0%;
+            background: #4CAF50;
+            transition: width 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <h1>30-Day Challenge</h1>
+    <div class="container" id="tracker"></div>
+    <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+    </div>
+    <script>
+        const container = document.getElementById("tracker");
+        const progressBar = document.getElementById("progress");
+
+        function loadProgress() {
+            return JSON.parse(localStorage.getItem("progress")) || [];
+        }
+
+        function saveProgress(progress) {
+            localStorage.setItem("progress", JSON.stringify(progress));
+            updateProgressBar(progress.length);
+        }
+
+        function updateProgressBar(count) {
+            progressBar.style.width = (count / 22 * 100) + "%";
+        }
+
+        function createDays() {
+            const progress = loadProgress();
+            updateProgressBar(progress.length);
+            for (let i = 1; i <= 22; i++) {
+                let day = document.createElement("div");
+                day.classList.add("day");
+                day.textContent = i;
+                if (progress.includes(i)) {
+                    day.classList.add("completed");
+                }
+                day.addEventListener("click", function() {
+                    if (progress.includes(i)) {
+                        progress.splice(progress.indexOf(i), 1);
+                        day.classList.remove("completed");
+                    } else {
+                        progress.push(i);
+                        day.classList.add("completed");
+                    }
+                    saveProgress(progress);
+                });
+                container.appendChild(day);
+            }
+        }
+        
+        createDays();
+    </script>
+</body>
+</html>
